@@ -1216,11 +1216,22 @@ const App = () => {
       const user = { id: userData.id, username: userData.username, name: userData.name, role: userData.role };
       setCurrentUser(user); localStorage.setItem('currentUser', JSON.stringify(user));
       setIsLoggedIn(true); setLoginUsername(''); setLoginPassword('');
+      // نصفّر أي نتيجة طالب كانت متسجّلة من صفحات الاستعلام العامة قبل تسجيل الدخول
+      setStudentResult(null); setStudentCode(''); setResultError('');
+      setPublicStudentResult(null); setPublicStudentCode(''); setPublicResultError('');
+      setScannedCode(''); setShowConfirmSearch(false); setShowResultDetails(false);
+      sessionStorage.removeItem('tempStudentName');
     } catch { setLoginError('حدث خطأ أثناء تسجيل الدخول'); }
     finally { setIsLoggingIn(false); }
   };
 
-  const handleLogout = () => { setIsLoggedIn(false); setCurrentUser(null); localStorage.removeItem('currentUser'); setCurrentPage('dashboard'); };
+  const handleLogout = () => {
+    setIsLoggedIn(false); setCurrentUser(null); localStorage.removeItem('currentUser'); setCurrentPage('dashboard');
+    setStudentResult(null); setStudentCode(''); setResultError('');
+    setPublicStudentResult(null); setPublicStudentCode(''); setPublicResultError('');
+    setScannedCode(''); setShowConfirmSearch(false); setShowResultDetails(false);
+    sessionStorage.removeItem('tempStudentName');
+  };
 
   const loadCurrentTerm = async () => {
     const { data: settings } = await supabase.from('app_settings').select('current_term_id').maybeSingle();
