@@ -2293,7 +2293,7 @@ return {success:true};
                 {/* Exam rows */}
                 {[
                   ...(studentResult.hasMonthly === false ? [] : [
-                    { label:'امتحان الشهر', icon:'📝', data:studentResult.monthly, max:30, color:'#3b82f6', bg:'rgba(59,130,246,.06)', border:'rgba(59,130,246,.15)', d:'.08s', showBreakdown:false,
+                    { label:'امتحان الشهر', icon:'📝', data:studentResult.monthly, max:30, color:'#3b82f6', bg:'rgba(59,130,246,.06)', border:'rgba(59,130,246,.15)', d:'.08s', showBreakdown:true,
                       subs:[{l:'قبطي',k:'coptic',m:10},{l:'طقس',k:'liturgy',m:10},{l:'تسميع',k:'oral',m:10}] },
                   ]),
                   { label:'الامتحان النهائي', icon:'🏆', data:studentResult.final, max:50, color:'var(--rose)', bg:'rgba(244,63,94,.06)', border:'rgba(244,63,94,.15)', d:'.16s', showBreakdown:true,
@@ -2789,7 +2789,7 @@ return {success:true};
 
                         {[
                           ...(publicStudentResult.hasMonthly === false ? [] : [
-                            { label:'امتحان الشهر', icon:'📝', data:publicStudentResult.monthly, max:30, color:'#3b82f6', showBreakdown:false,
+                            { label:'امتحان الشهر', icon:'📝', data:publicStudentResult.monthly, max:30, color:'#3b82f6', showBreakdown:true,
                               subs:[{l:'قبطي',k:'coptic',m:10},{l:'طقس',k:'liturgy',m:10},{l:'تسميع',k:'oral',m:10}] },
                           ]),
                           { label:'الامتحان النهائي', icon:'🏆', data:publicStudentResult.final, max:50, color:'var(--rose)', showBreakdown:true,
@@ -2837,54 +2837,6 @@ return {success:true};
                             </div>
                           );
                         })}
-                      </div>
-                    )}
-
-                    {/* ══ مخطوطة التهنئة القبطية ══ */}
-                    {parseFloat(publicStudentResult.total) >= 50 && (
-                      <div className="manuscript">
-                        {/* شرارات ذهبية عائمة */}
-                        {[
-                          {l:'8%', delay:'0s'}, {l:'26%', delay:'.6s'}, {l:'50%', delay:'1.2s'},
-                          {l:'74%', delay:'.3s'}, {l:'92%', delay:'.9s'},
-                        ].map((s,i)=>(
-                          <span key={i} className="manuscript-spark" style={{ left:s.l, bottom:'10px', animationDelay:s.delay, fontSize:12 }}>✦</span>
-                        ))}
-
-                        {/* زخارف الأركان: صليب قبطي بسيط */}
-                        {['tl','tr','bl','br'].map(pos=>(
-                          <svg key={pos} className={`manuscript-corner ${pos}`} viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
-                            <path d="M16 3v11M16 26v3M3 16h11M26 16h3M16 14a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" strokeLinecap="round"/>
-                          </svg>
-                        ))}
-
-                        <p className="manuscript-eyebrow">Ⲧⲉⲛⲟⲩⲉϩ ⲛ̀ⲥⲱⲕ</p>
-                        <p className="manuscript-school">مدرسة Ⲧⲉⲛⲟⲩⲉϩ ⲛ̀ⲥⲱⲕ لتعليم الالحان</p>
-
-                        <hr className="manuscript-rule" />
-
-                        <p className="manuscript-title">🎉 تهنئك لنجاحك 🎉</p>
-                        <p className="manuscript-body">
-                          اجتزت السنة الأولى بنجاح، ودلوقتي هتبدأ معانا رحلة جديدة في السنة الثانية ✨
-                        </p>
-
-                        <div className="manuscript-sched">
-                          <svg className="manuscript-sched-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                            <rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 9h18" strokeLinecap="round"/>
-                          </svg>
-                          <div style={{ textAlign:'right' }}>
-                            <p className="manuscript-sched-label">📅 مواعيد السنة الدراسية الثانية</p>
-                            <p className="manuscript-sched-value">يوم الأربعاء - الساعة ٧:٣٠ مساءً</p>
-                          </div>
-                        </div>
-
-                        {/* الختم الشمعي */}
-                        <div className="wax-seal">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                            <path d="M16 3v11M16 26v3M3 16h11M26 16h3" strokeLinecap="round"/>
-                            <circle cx="12" cy="12" r="9" strokeWidth="1.4"/>
-                          </svg>
-                        </div>
                       </div>
                     )}
 
