@@ -943,6 +943,7 @@ const App = () => {
   const [endTermPassword, setEndTermPassword] = useState('');
   const [isEndingTerm, setIsEndingTerm] = useState(false);
   const [isAddingSession, setIsAddingSession] = useState(false);
+  const [isDeletingSession, setIsDeletingSession] = useState(false);
   const [allTerms, setAllTerms] = useState([]); // كل ترمات السنة الدراسية الحالية (لتقرير السنة ولمحول الترمات)
   const [yearlyData, setYearlyData] = useState({}); // { [studentId]: { [termId]: {...} } }
   const [loadingYearly, setLoadingYearly] = useState(false);
@@ -1282,6 +1283,25 @@ const App = () => {
       toast.success(`تمت إضافة الحصة رقم ${data}! ✅`, { id: tid });
     } catch { toast.error('حدث خطأ أثناء إضافة الحصة!', { id: tid }); }
     finally { setIsAddingSession(false); }
+  };
+
+  // حذف آخر حصة — مرفوض لو فيه أي طالب متسجل حاضر فيها (لازم تشيل حضوره الأول)
+  const deleteLastSession = async () => {
+    if (isDeletingSession || sessionCount === 0) return;
+    if (!window.confirm(`هل أنت متأكد من مسح الحصة رقم ${sessionCount}؟`)) return;
+    setIsDeletingSession(true);
+    const tid = toast.loading('جاري حذف الحصة...');
+    try {
+      const { data, error } = await supabase.rpc('delete_last_session');
+      if (error) throw error;
+      setCurrentTerm(prev => prev ? { ...prev, session_count: data } : prev);
+      setAllTerms(prev => prev.map(t => t.id === currentTerm?.id ? { ...t, session_count: data } : t));
+      setLockedSessions(prev => prev.slice(0, data));
+      await loadAttendance();
+      toast.success('تم حذف الحصة! 🗑️', { id: tid });
+    } catch (err) {
+      toast.error(err.message || 'حدث خطأ أثناء حذف الحصة!', { id: tid, duration: 4000 });
+    } finally { setIsDeletingSession(false); }
   };
 
   // إنهاء الترم النشط والانتقال للترم اللي بعده (محمي بباسورد)
@@ -3388,6 +3408,11 @@ return {success:true};
                         <button onClick={addSession} disabled={isAddingSession} className="btn btn-teal btn-sm">
                           <Plus size={14}/> إضافة حصة
                         </button>
+                        {sessionCount > 0 && (
+                          <button onClick={deleteLastSession} disabled={isDeletingSession} className="btn btn-sm" style={{ background:'var(--inp-bg)', color:'var(--rose)', border:'1px solid var(--rose)' }}>
+                            <Trash2 size={14}/> حذف آخر حصة
+                          </button>
+                        )}
                         <button onClick={()=>setShowEndTermConfirm(true)} className="btn btn-sm" style={{ background:'var(--rose)', color:'#fff' }}>
                           إنهاء الترم
                         </button>
