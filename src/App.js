@@ -1910,6 +1910,13 @@ return {success:true};
     : allExamConfigs;
   const examCfg = examConfigs.find(e => e.type===currentExam) || examConfigs[0];
 
+  // لو التاب الحالي (currentExam) بقى مش موجود أصلاً في تابات الترم ده (زي "الشهري" في ترم من غيره)، نرجّعه لأول تاب متاح فعليًا
+  useEffect(() => {
+    if (examConfigs.length && !examConfigs.some(e => e.type === currentExam)) {
+      setCurrentExam(examConfigs[0].type);
+    }
+  }, [effectiveTerm?.id, effectiveTerm?.has_monthly]);
+
   const navItems = [
     { id:'dashboard',     icon:BarChart3,    label:'الإحصائيات', emoji:'📊' },
     { id:'students',      icon:Users,        label:'الطلاب',      emoji:'👥' },
@@ -3627,7 +3634,7 @@ setTimeout(()=>{setIsScanPaused(false);setScannedStudentData(null);},1500);
                       </thead>
                       <tbody>
                         {filteredExamStudents.map((s,idx) => {
-                          const ex = exams[s.id]?.[currentExam] || {};
+                          const ex = exams[s.id]?.[examCfg.type] || {};
                           const rawTotal = examCfg.fields.filter(f=>f.key!=='bonus').reduce((sum,f)=>sum+(ex[f.key]||0),0);
                           const bonus = ex.bonus||0;
                           return (
@@ -3642,7 +3649,7 @@ setTimeout(()=>{setIsScanPaused(false);setScannedStudentData(null);},1500);
                                     onChange={e => {
                                       const v = parseFloat(e.target.value)||0;
                                       if (f.max && v > f.max) { toast.error(`أقصى درجة ${f.max}`); return; }
-                                      updateExamScore(s.id, currentExam, f.key, v);
+                                      updateExamScore(s.id, examCfg.type, f.key, v);
                                     }}/>
                                 </td>
                               ))}
